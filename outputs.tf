@@ -1,3 +1,5 @@
+# outputs.tf
+
 ##########################
 # Outputs
 ##########################
@@ -8,7 +10,7 @@ output "vm_ids" {
 
 output "vm_passwords" {
   description = "Admin passwords of the provisioned VMs."
-  value       = { for k, vm in azurerm_windows_virtual_machine.vm_windows : k => random_password.password.result }
+  value       = { for k, pwd in random_password.password : k => pwd.result }
   sensitive   = true
 }
 

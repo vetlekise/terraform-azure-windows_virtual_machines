@@ -6,12 +6,12 @@ variable "vm_windows_config" {
     accelerated_networking_enabled = optional(bool)
     proximity_placement_group_id   = optional(string)
     enable_domain_joining          = bool
-    domain_join = object({
+    domain_join = optional(object({
       domain_name    = string
       ou_path        = string
       account_name   = string
       account_secret = string
-    })
+    }))
     os_disk = object({
       size    = number
       caching = string

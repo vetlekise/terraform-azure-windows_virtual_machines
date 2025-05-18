@@ -1,3 +1,5 @@
+# main.tf
+
 ##########################
 # Virtual Machines
 ##########################
@@ -9,7 +11,7 @@ resource "azurerm_windows_virtual_machine" "vm_windows" {
   resource_group_name          = data.azurerm_resource_group.vm_windows_rg.name
   size                         = each.value.size
   admin_username               = "adminuser"
-  admin_password               = random_password.password.result
+  admin_password               = random_password.password[each.key].result
   availability_set_id          = each.value.availability_set_id # Optional
   zone                         = each.value.zone                # Optional
   license_type                 = each.value.license_type
@@ -24,11 +26,14 @@ resource "azurerm_windows_virtual_machine" "vm_windows" {
   provision_vm_agent    = true
   hotpatching_enabled   = false
 
+  encryption_at_host_enabled = true
+
   os_disk {
-    name                 = "${each.value.name}-osdisk01"
-    caching              = each.value.os_disk.caching
-    storage_account_type = each.value.os_disk.sa_type
-    disk_size_gb         = each.value.os_disk.size
+    name                     = "${each.value.name}-osdisk01"
+    caching                  = each.value.os_disk.caching
+    storage_account_type     = each.value.os_disk.sa_type
+    disk_size_gb             = each.value.os_disk.size
+    security_encryption_type = "PlatformManagedKey"
   }
 
   source_image_reference {
@@ -69,8 +74,7 @@ resource "azurerm_network_interface" "vm_windows_nic" {
 
   lifecycle {
     ignore_changes = [
-      location,
-      ip_configuration
+      location
     ]
   }
   tags = var.tags
@@ -90,6 +94,9 @@ resource "azurerm_managed_disk" "vm_windows_data_disk" {
   create_option        = each.value.create_option
   disk_size_gb         = each.value.size
   zone                 = each.value.zone
+
+  # Fix for CKV_AZURE_251: Ensure Azure Virtual Machine disks are configured without public network access
+  public_network_access_enabled = false
 
   lifecycle {
     ignore_changes = [
@@ -115,6 +122,8 @@ resource "azurerm_virtual_machine_data_disk_attachment" "vm_windows_data_disks_a
 # Generated Passwords
 ##########################
 resource "random_password" "password" {
+  for_each = var.vm_windows_config
+
   length           = 16
   special          = true
   override_special = "!#$%&*()-_=+[]{}<>:?"
@@ -127,8 +136,10 @@ resource "azurerm_key_vault_secret" "vm_windows_password" {
   for_each = var.vm_windows_config
 
   name         = "${each.value.name}-password"
-  value        = random_password.password.result
+  value        = random_password.password[each.key].result
   key_vault_id = each.value.kv_id
+
+  content_type = "text/plain"
 
   tags = merge(var.tags, {
     Username    = "adminuser"
@@ -139,7 +150,7 @@ resource "azurerm_key_vault_secret" "vm_windows_password" {
 data "azurerm_key_vault_secret" "vm_windows_domain_join_password" {
   for_each = {
     for k, vm in var.vm_windows_config : k => vm
-    if vm.enable_domain_joining != false
+    if vm.enable_domain_joining != false && vm.domain_join != null
   }
 
   name         = each.value.domain_join.account_secret
@@ -152,7 +163,7 @@ data "azurerm_key_vault_secret" "vm_windows_domain_join_password" {
 resource "azurerm_virtual_machine_extension" "vm_windows_domain_join" {
   for_each = {
     for k, vm in var.vm_windows_config : k => vm
-    if vm.enable_domain_joining != false
+    if vm.enable_domain_joining != false && vm.domain_join != null
   }
 
   name                 = "ADDomainJoin"

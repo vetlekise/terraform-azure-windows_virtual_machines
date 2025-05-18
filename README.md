@@ -1,18 +1,83 @@
-# Module Name
+# Terraform - Azure - Windows Virtual Machines
 
-> Insert one-liner description here.
->
-> Example: This Terraform module deploys an APPLICATION on PROVIDER using SERVICE.
+A Terraform module for deploying one or more Windows virtual machines in Azure, supporting configuration of multiple data disks, MSSQL installation, and Active Directory domain joining. 
 
 ## Usage
 
 Below is a basic example of how to use this module. For more detailed examples, please refer to the [examples](./examples) directory.
 
-```terraform
-module "example" {
-  # Use commit hash to prevent supply chain attacks.
-  # source = "github.com/organization/repository-name?ref=v1.0.0
-  source = "github.com/organization/repository?ref=a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0"
+This example includes all possible inputs. Some are marked as optional and can be omitted from the code.
+```Terraform
+module "windows_virtual_machines" {
+  source = "github.com/vetlekise/terraform-azure-windows_virtual_machines"
+
+  rg_name = azurerm_resource_group.rg_example.name # you'll need to create this resource group separately
+
+  network_config = {
+    vnet_rg     = azurerm_resource_group.rg_example.name
+    vnet_name   = azurerm_virtual_network.vnet_example.name
+    subnet_name = azurerm_subnet.snet_example.name
+  }
+  vm_windows_config = {
+    "wvm01" # vm_key = {
+      name                          = "example-name"
+      size                          = "example-size"
+      private_ip                    = "0.0.0.0"
+      enable_accelerated_networking = false # optional
+      proximity_placement_group_id  = azurerm_proximity_placement_group.ppg_example.id # optional
+      enable_domain_joining         = false # change this to "true" if you want to use the domain join extension
+      domain_join = {
+        # see the locals.tf
+        domain_name    = local.domain_join.config.domain
+        ou_path        = local.domain_join.config.ou_path
+        account_name   = local.domain_join.config.account_name
+        account_secret = local.domain_join.config.account_secret
+      }
+      os_disk = {
+        size    = 128
+        caching = "ReadWrite"
+        sa_type = "Premium_LRS"
+      }
+      license_type = "None"
+      os_image = {
+        publisher = "microsoftsqlserver"
+        offer     = "sql2022-ws2022"
+        sku       = "standard-gen2"
+        version   = "latest"
+      }
+      availability_set_id = azurerm_availability_set.as_example.name # optional
+      zone  = 2 # optional
+      kv_id = azurerm_key_vault.kv_example.id
+      vm_tags = {
+        Username    = "admin"
+        OSType      = "Windows"
+        Description = "SQL Std 2022"
+      }
+    }
+  }
+
+  data_disks = {
+    wvm01_datadisk_01 = { # example name - the name for this data disk would be "vmname-datadisk-01". "vmname" is the VM name of the specified vm_key value
+      vm_key        = "wvm01"
+      disk_name     = "datadisk"
+      seq_num       = "01"
+      lun           = 1
+      size          = 600
+      create_option = "Empty"
+      caching       = "None"
+      sa_type       = "PremiumV2_LRS"
+      zone          = 2 # optional
+    }
+  }
+
+  # if you don't want any data disks you'll need to add this line:
+  # data_disks = {}
+
+  tags = local.tags # optional
+
+  depends_on = [
+    azurerm_resource_group.rg_example,
+  ]
 }
 ```
 

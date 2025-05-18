@@ -1,0 +1,106 @@
+name: Bug
+description: Report a problem or unexpected behavior.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+
+  - type: dropdown
+    id: affected-module-component
+    attributes:
+      label: Affected Module Component
+      description: "Which part of the Terraform module is experiencing the issue?"
+      multiple: true
+      options:
+        - Variables (inputs)
+        - Outputs
+        - Resources (e.g., aws_instance, azurerm_resource_group)
+        - Providers (e.g., AWS, Azure, GCP)
+        - Module Logic/Structure
+        - Documentation (README, examples, etc.)
+        - Examples
+        - Tests
+        - Other (please specify in description)
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem-description
+    attributes:
+      label: Describe the Bug
+      description: "A clear and concise description of what the bug is. What did you expect to happen, and what actually happened? Please include any error messages."
+      placeholder: |
+        e.g., Expected the module to create an S3 bucket with versioning enabled, but versioning was not enabled after applying the configuration.
+        Error message: `Error: ...`
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: Steps to Reproduce
+      description: "How can we reproduce this behavior? Please provide a minimal reproducible example if possible."
+      placeholder: |
+        1. Define the module with the following inputs:
+           ```terraform
+           module "my_module" {
+             source = "./" # or your module source
+             # ... problematic input values ...
+           }
+           ```
+        2. Run `terraform init`
+        3. Run `terraform plan`
+        4. Run `terraform apply`
+        5. Observe the unexpected behavior or error...
+    validations:
+      required: true
+
+  - type: textarea
+    id: terraform-configuration
+    attributes:
+      label: Relevant Terraform Configuration
+      description: "Paste the relevant parts of your Terraform configuration (main.tf, variables.tf, etc.) that call this module. Please **remove any sensitive information** before pasting."
+      placeholder: |
+        ```terraform
+        # Example of how you are calling the module
+        module "example" {
+          source  = "your/module/source"
+          version = "x.y.z"
+
+          # input_variable_1 = "value1"
+          # input_variable_2 = "value2"
+          # ...
+        }
+
+        # Example of relevant provider configuration
+        provider "aws" {
+          region = "us-east-1"
+        }
+        ```
+      render: terraform
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment-details
+    attributes:
+      label: Environment Details
+      description: "Provide details about the environment where the issue occurred."
+      placeholder: |
+        - Terraform Version: `terraform -v`
+        - Provider Versions: (e.g., AWS provider v5.3.0, AzureRM provider v3.50.0)
+        - Module Version: (if applicable)
+        - Operating System: (e.g., Ubuntu 22.04, macOS Sonoma, Windows 11)
+        - CI/CD System: (e.g., GitHub Actions, GitLab CI, Jenkins - if relevant)
+        - Any other relevant tools or configurations:
+      render: markdown
+    validations:
+      required: true # Environment details are also very important
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant Log Output (Plan/Apply)
+      description: "Copy and paste any relevant `terraform plan` or `terraform apply` output. This will be automatically formatted. Please **remove any sensitive information**."
+      render: shell
+    validations:
+      required: false

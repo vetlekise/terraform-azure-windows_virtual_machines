@@ -1,0 +1,51 @@
+# .terraform-docs.yml
+
+# Which formatter to use. "markdown table" is common for READMEs.
+# Other options include: asciidoc table, json, pretty, tfvars hcl, tfvars json, toml, xml, yaml
+formatter: "markdown table"
+
+version: "" # Optional: Pin to a specific terraform-docs version constraint
+
+# Optional: Content to be injected at the beginning of the generated docs
+# header-from: "main.tf" # Extracts header from main.tf
+# footer-from: "" # Extracts footer from a file
+
+recursive:
+  enabled: false # Set to true if you have submodules within this module to document as well
+  path: "modules"
+
+sections:
+  hide: [] # List of sections to hide (e.g., "header", "footer", "inputs", "outputs", "providers", "requirements", "resources", "modules")
+  show: [] # List of sections to show (if empty, all are shown unless hidden)
+
+# Defines how the output is generated and where it goes
+output:
+  file: "README.md" # The file to create/update
+  mode: "inject"    # How to write to the file:
+                    #   "replace" (default): Replaces the entire file.
+                    #   "inject": Injects content between markers.
+  template: |-
+    {{ .Content }}
+# Optional: Configure output values section
+# output-values:
+#   enabled: false
+#   from: ""
+
+sort:
+  enabled: true
+  by: "name" # or "required" or "type"
+
+settings:
+  anchor: true
+  color: true # Only affects terminal output, not generated files
+  default: true
+  description: false
+  escape: true
+  hide-empty: false
+  html: true # Relevant for markdown, enables HTML elements
+  indent: 2
+  lockfile: true # Read .terraform.lock.hcl for provider versions
+  read-comments: true
+  required: true
+  sensitive: true
+  type: true

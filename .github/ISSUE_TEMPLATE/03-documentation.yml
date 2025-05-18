@@ -1,0 +1,70 @@
+name: Documentation
+description: Report an error, suggest an improvement, or request new documentation.
+title: "[Docs]: "
+labels: ["documentation"]
+body:
+
+  - type: input
+    id: doc-location
+    attributes:
+      label: Location of Documentation
+      description: "Which document, section, page, or part of the module's documentation needs attention? (e.g., README.md, specific variable description, example code)"
+      placeholder: "e.g., README.md - Inputs section, examples/basic/main.tf, description of 'instance_type' variable"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: issue-type
+    attributes:
+      label: Type of Documentation Issue
+      description: "What kind of documentation issue is this?"
+      options:
+        - Typo or grammatical error
+        - Incorrect information
+        - Missing information
+        - Unclear or confusing content
+        - Request for new documentation section/page
+        - Suggestion for improvement
+        - Broken link or formatting issue
+        - Example code issue
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the Documentation Issue/Request
+      description: "Please provide a clear and concise description of the problem or suggestion. If reporting an error, what is incorrect or unclear?"
+      placeholder: |
+        e.g.,
+        - The description for the `vpc_id` variable is missing.
+        - The example code in `examples/advanced/main.tf` does not work due to a missing required provider.
+        - The "Outputs" section in the README.md is confusing and doesn't clearly explain what each output represents.
+    validations:
+      required: true
+
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation / Reason
+      description: "Why does this documentation need changing or what is the benefit of the new documentation? What problem does the current state cause for users of the module?"
+      placeholder: |
+        e.g.,
+        - New users might not understand how to use the `vpc_id` variable without a proper description.
+        - The broken example prevents users from quickly testing the advanced features of the module.
+        - Clearer output descriptions would help users understand how to integrate this module with other parts of their infrastructure.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed-change
+    attributes:
+      label: Proposed Change / Suggestion (Optional)
+      description: "How do you suggest fixing or improving the documentation? If you have a specific wording or code change, please include it."
+      placeholder: |
+        e.g.,
+        - Suggest adding the following description for `vpc_id`: "The ID of the VPC where resources will be created."
+        - "The example code needs to include a `required_providers` block for the AWS provider."
+        - "Rewrite the 'Outputs' section to include a 'Use Case' for each output."
+    validations:
+      required: false

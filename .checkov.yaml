@@ -1,0 +1,18 @@
+# .checkov.yaml
+directory:
+  - "."
+framework:
+  - terraform
+# soft-fail: false # uncomment if you want to explicitly set it
+# quiet: true # uncomment to make output quieter
+# output: sarif # uncomment for SARIF output
+# output-file-path: console # or checkov.sarif if output is sarif
+# check: # uncomment and list checks to run
+#   - CKV_AWS_20
+#   - CKV_GCP_1
+# skip-check: # uncomment and list checks to skip
+#   - CKV_AWS_18: "Reason for skipping this check" # Adding a suppression comment is good practice
+# compact: true # for a more compact console output
+#
+# For more advanced configurations like custom policies, external modules, etc.,
+# refer to the Checkov documentation.

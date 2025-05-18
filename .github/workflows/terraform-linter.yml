@@ -1,0 +1,59 @@
+name: TFLint, Trivy & Checkov
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize]
+
+permissions:
+  contents: read
+
+jobs:
+  tflint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup TFLint
+        uses: terraform-linters/setup-tflint@v4
+        with:
+          # Optional: specify TFLint version
+          tflint_version: latest
+          # Optional: enable all rulesets, including those not in the config file
+          # tflint_rulesets_all: true
+          # Optional: enable verbose logging
+          # tflint_actions_verbose: true
+
+      - name: Initialize TFLint plugins
+        run: tflint --init
+
+      - name: Run TFLint
+        run: tflint --recursive --format=compact
+        # Available formats: default, json, checkstyle, junit, compact, sarif
+        # Use --recursive if you have Terraform files in subdirectories
+
+  trivy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Trivy
+        run: |
+          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v0.62.1
+          # You can also use: brew install aquasecurity/trivy/trivy if brew is available
+
+      - name: Run Trivy IaC scan
+        run: trivy config .
+
+  checkov:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Checkov
+        uses: bridgecrewio/checkov-action@v12

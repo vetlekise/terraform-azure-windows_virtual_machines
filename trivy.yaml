@@ -1,0 +1,34 @@
+# trivy.yaml
+scan:
+  # Target to scan, equivalent to the trailing '.' in your command
+  # This is often implicitly the current directory if not specified or can be set via CLI still.
+  # For 'trivy config', the target is usually passed as the last argument.
+  # However, some global options can be set here.
+
+# Options related to 'config' subcommand
+config:
+  # Equivalent to --exit-code 1
+  exit-code: 1
+  # Equivalent to --severity HIGH,CRITICAL
+  severity:
+    - HIGH
+    - CRITICAL
+  # Equivalent to --format table
+  format: table
+  # You could also specify output here if needed, e.g., for SARIF
+  # output: trivy-results.sarif
+
+# You might need to adjust the structure slightly based on the exact Trivy version
+# and how it parses config files for specific subcommands like 'config'.
+# It's common for 'scan' related options to be more prevalent in config files.
+# For IaC specific scanning, you might use:
+iac:
+  severity:
+    - HIGH
+    - CRITICAL
+  # ensure other iac specific options are here if available
+
+# General options often available:
+# severity: HIGH,CRITICAL # This might be a global fallback
+# exit-code: 1
+# format: table

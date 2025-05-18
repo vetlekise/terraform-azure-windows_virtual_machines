@@ -1,0 +1,65 @@
+name: Enhancement
+description: Suggest an idea, enhancement, or new feature.
+title: "[Enhancement]: "
+labels: ["enhancement"]
+body:
+
+  - type: textarea
+    id: feature-description
+    attributes:
+      label: Describe the Enhancement
+      description: "What is the new feature or improvement you are proposing? What is the goal?"
+      placeholder: |
+        e.g., Add support for configuring lifecycle rules (e.g., expiration, transitions) for the S3 bucket created by the module.
+        Goal: Allow users to manage object lifecycle within the bucket directly through the module.
+    validations:
+      required: true
+
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation / Problem Solved
+      description: "Why is this feature needed? What problem does it solve, or what benefit does it provide to users of this module?"
+      placeholder: |
+        e.g., Currently, users have to configure S3 lifecycle rules outside of this module, which can be cumbersome and lead to configuration drift.
+        This enhancement would centralize S3 bucket configuration and make it easier to manage costs by archiving or deleting old objects.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed-solution
+    attributes:
+      label: Proposed Solution (Optional)
+      description: "Do you have any ideas on how this feature could be implemented within the module? Think about new variables, resources, or changes to existing logic."
+      placeholder: |
+        e.g.,
+        - Add new input variables like `lifecycle_rules` (a list of objects) to define transition and expiration actions.
+        - Update the `aws_s3_bucket` resource to include a `lifecycle_rule` block based on these variables.
+        - Provide an example usage in the `examples/` directory.
+    validations:
+      required: false
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered (Optional)
+      description: "Are there any alternative solutions or features you've considered? Why is your proposed solution better?"
+      placeholder: |
+        e.g.,
+        - Users could manage lifecycle rules manually via the AWS console or a separate Terraform configuration. However, this defeats the purpose of a comprehensive module.
+        - Another module could be created specifically for S3 lifecycle rules, but integrating it here seems more user-friendly.
+    validations:
+      required: false
+
+  - type: textarea
+    id: impact
+    attributes:
+      label: Potential Impact (Optional)
+      description: "What is the potential impact of this enhancement? Consider aspects like breaking changes, new dependencies, or changes to module outputs."
+      placeholder: |
+        e.g.,
+        - This should be a non-breaking change if new variables have appropriate defaults.
+        - No new provider dependencies are expected.
+        - Module outputs might not need to change.
+    validations:
+      required: false

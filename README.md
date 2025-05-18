@@ -4,9 +4,8 @@ A Terraform module for deploying one or more Windows virtual machines in Azure, 
 
 ## Usage
 
-Below is a basic example of how to use this module. For more detailed examples, please refer to the [examples](./examples) directory.
-
 This example includes all possible inputs. Some are marked as optional and can be omitted from the code.
+
 ```Terraform
 module "windows_virtual_machines" {
   source = "github.com/vetlekise/terraform-azure-windows_virtual_machines"

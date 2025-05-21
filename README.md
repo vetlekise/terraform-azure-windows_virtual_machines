@@ -1,6 +1,6 @@
 # Terraform - Azure - Windows Virtual Machines
 
-A Terraform module for deploying one or more Windows virtual machines in Azure, supporting configuration of multiple data disks, MSSQL installation, and Active Directory domain joining. 
+A Terraform module for deploying one or more Windows virtual machines in Azure, supporting configuration of multiple data disks, and Active Directory domain joining. 
 
 ## Usage
 
